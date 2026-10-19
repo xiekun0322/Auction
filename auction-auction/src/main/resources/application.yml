@@ -1,0 +1,27 @@
+server:
+  port: 8082
+spring:
+  application:
+    name: auction-core
+  datasource:
+    url: jdbc:h2:mem:auctiondb;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+  sql.init.mode: always
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+  h2.console.enabled: true
+mybatis.configuration.map-underscore-to-camel-case: true
+
+auction:
+  use-redis: false           # MVP 默认走 DB 降级，有 Redis 时改 true
+  extend-threshold-seconds: 300
+  extend-seconds: 60
+
+feign:
+  fund-url: http://localhost:8081
+  record-url: http://localhost:8083
+  order-url: http://localhost:8084

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>司法拍卖登录</title>
+<style>
+body{margin:0;font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;background:#f0f2f5}
+.card{background:#fff;padding:40px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.1);width:340px}
+h2{text-align:center;margin-top:0}
+input{width:100%;padding:10px;margin-bottom:16px;border:1px solid #ddd;border-radius:4px;box-sizing:border-box}
+button{width:100%;padding:10px;background:#1677ff;color:#fff;border:0;border-radius:4px;cursor:pointer;font-size:16px}
+.tip{font-size:12px;color:#999;text-align:center;margin-top:12px}
+</style></head>
+<body>
+<form class="card" method="post" action="/api/login">
+  <h2>司法拍卖平台</h2>
+  <input name="username" value="bidder1" placeholder="用户名" required>
+  <input name="password" type="password" value="123456" placeholder="密码" required>
+  <button>登录</button>
+  <div class="tip">bidder1/123456 · admin/123456 · finance/123456</div>
+</form>
+</body></html>

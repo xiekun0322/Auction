@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>竞买人</title>
+<style>
+body{font-family:Arial;margin:0;background:#f5f6f8}
+.nav{background:#1677ff;color:#fff;padding:14px 24px;display:flex;justify-content:space-between}
+.container{max-width:1000px;margin:24px auto;padding:0 16px}
+.card{background:#fff;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:24px;margin-bottom:16px}
+h3{margin-top:0}
+.price{font-size:28px;color:#e74c3c;font-weight:bold}
+.badge{display:inline-block;padding:2px 8px;background:#ffeaa7;color:#b8860b;border-radius:4px;font-size:12px}
+input,button{padding:8px 12px;border-radius:4px;font-size:14px}
+input{border:1px solid #ddd;width:200px}
+button{background:#1677ff;color:#fff;border:0;cursor:pointer;margin-left:8px}
+#log{background:#1e1e1e;color:#b5e8b5;font-family:monospace;padding:12px;height:180px;overflow:auto;border-radius:4px;font-size:12px}
+</style></head>
+<body>
+<div class="nav"><span>司法拍卖 · 竞买人</span><a href="/api/logout" style="color:#fff">退出</a></div>
+<div class="container">
+  <div class="card"><h3>标的物</h3><div id="info">加载中...</div></div>
+  <div class="card">
+    <h3>出价</h3>
+    <div>竞买人 ID：<input id="userId" value="1"></div>
+    <div style="margin-top:8px">出价金额：<input id="amount" value="1200">
+      <button onclick="bid()">出价</button>
+      <button onclick="refresh()">刷新</button>
+    </div>
+    <div style="color:#666;font-size:12px;margin-top:8px">最后 5 分钟内出价自动延时 60 秒</div>
+  </div>
+  <div class="card"><h3>日志</h3><div id="log"></div></div>
+</div>
+<script>
+let itemId=1;
+function log(s){document.getElementById('log').innerHTML=`[${new Date().toLocaleTimeString()}] ${s}<br>`+document.getElementById('log').innerHTML;}
+async function refresh(){
+  const r=await fetch('/api/auction/items');const j=await r.json();
+  if(!j.data||!j.data.length)return;
+  const it=j.data.find(x=>x.id===itemId)||j.data[0];itemId=it.id;
+  document.getElementById('info').innerHTML=`
+    <div>案号：${it.caseNo}</div>
+    <div>标的物：${it.title}</div>
+    <div>起拍价：￥${it.startPrice}</div>
+    <div>当前价：<span class="price">￥${it.currentPrice}</span></div>
+    <div>领先者：${it.leaderId?'用户'+it.leaderId:'暂无'}</div>
+    <div>截止：${it.endTime}</div>
+    <div>状态：<span class="badge">${it.status}</span></div>`;
+  document.getElementById('amount').value=Number(it.currentPrice)+100;
+}
+async function bid(){
+  const body={itemId,userId:Number(document.getElementById('userId').value),amount:Number(document.getElementById('amount').value),idemKey:'k-'+Date.now()+'-'+Math.random().toString(36).slice(2,8)};
+  const r=await fetch('/api/auction/bid',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const j=await r.json();
+  if(j.code===0){log('✅ 出价成功 ￥'+body.amount);refresh();}else log('❌ '+j.msg);
+}
+refresh();setInterval(refresh,3000);
+</script>
+</body></html>

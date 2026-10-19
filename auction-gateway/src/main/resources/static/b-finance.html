@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>财务对账</title>
+<style>
+body{font-family:Arial;margin:0;background:#f5f6f8}
+.nav{background:#16a085;color:#fff;padding:14px 24px}
+.container{max-width:1000px;margin:24px auto;padding:0 16px}
+.card{background:#fff;border-radius:8px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
+th{background:#fafafa}
+</style></head>
+<body>
+<div class="nav">财务对账 <a href="/api/logout" style="color:#fff;float:right">退出</a></div>
+<div class="container"><div class="card">
+<h3>对账差异</h3>
+<table><thead><tr><th>ID</th><th>用户</th><th>账户余额</th><th>流水汇总</th><th>差异</th><th>时间</th></tr></thead>
+<tbody id="tb"></tbody></table>
+</div></div>
+<script>
+async function load(){
+  const r=await fetch('/api/reconcile/diff');const j=await r.json();
+  document.getElementById('tb').innerHTML=(j.data||[]).map(d=>`<tr>
+    <td>${d.id}</td><td>${d.userId}</td><td>￥${d.dbBalance}</td>
+    <td>￥${d.flowBalance}</td><td style="color:#e74c3c">￥${d.diff}</td>
+    <td>${d.createTime}</td></tr>`).join('')||'<tr><td colspan="6" style="text-align:center;color:#999">暂无差异</td></tr>';
+}
+load();setInterval(load,10000);
+</script>
+</body></html>

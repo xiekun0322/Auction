@@ -1,0 +1,42 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: auction-gateway
+  cloud:
+    gateway:
+      routes:
+        - id: user-login
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/login,/api/logout
+        - id: user-fund
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/fund/**
+        - id: auction-core
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/auction/**
+        - id: order
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/order/**
+        - id: record
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/record/**
+        - id: reconcile
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/reconcile/**
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
